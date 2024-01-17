@@ -1,0 +1,24 @@
+#!/bin/bash
+
+ip_result="这个是优选后的result.csv的位置"
+ip_conf="/etc/wireguard/wg0.conf" #我系统是Ubuntu 22.04.3 LTS
+
+#一 获取优选的IP
+	#1.执行优选脚本 我用的是他的https://gitlab.com/Misaka-blog/warp-script
+	bash /home/warp-yxip.sh          #替换成你自己目录下的脚本位置
+	
+	#2.提取脚本里的IP到变量中
+	best_ip=`sed -n '2p' $ip_result | sed 's/,.*$//'`
+	echo $best_ip
+
+#二 写入wireguade文件
+	#1.将优选后的IP写入（需要root权限才可以写入）
+	sudo sed -i 's/Endpoint = .*/Endpoint = '"${best_ip}"'/'  $ip_conf
+	sudo cat $ip_conf
+
+#三 启动wireguade程序
+	#1.启动
+	sudo wg-quick up wg0
+
+#四 设置快捷启动方式 
+  自己自由设置
